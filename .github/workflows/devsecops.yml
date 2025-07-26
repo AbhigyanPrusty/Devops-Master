@@ -22,9 +22,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tfsec-reports
-          path: |
-            tfsec-results.sarif
-            tfsec-results.html
+          path: tfsec-results.sarif
 
   trivy:
     name: Docker Image Scan
@@ -57,8 +55,7 @@ jobs:
       AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         if: ${{ env.AWS_KEY != '' && env.AWS_SECRET != '' }}
