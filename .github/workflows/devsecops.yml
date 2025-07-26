@@ -18,7 +18,7 @@ jobs:
           tfsec --format html --out tfsec-results.html .
 
       - name: Upload tfsec report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfsec-reports
           path: |
@@ -40,7 +40,7 @@ jobs:
           trivy image --format sarif --output trivy-results.sarif myapp:latest
 
       - name: Upload Trivy report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trivy-reports
           path: |
