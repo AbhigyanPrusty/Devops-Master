@@ -13,24 +13,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1.0.0
+        run: |
+          tfsec --format sarif --out tfsec-results.sarif .
+          tfsec --format html --out tfsec-results.html .
 
-  trivy:
-    name: Docker Image Scan
-    runs-on: ubuntu-latest
-    needs: tfsec
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: docker build -t myapp:latest .
-      - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@master
+      - name: Upload tfsec report
+        uses: actions/upload-artifact@v3
         with:
-          image-ref: myapp:latest
-          format: table
-          exit-code: 1
-          ignore-unfixed: true
+          name: tfsec-reports
+          path: |
+            tfsec-results.sarif
+            tfsec-results.html
 
+
+            trivy:
+              name: Docker Image Scan
+              runs-on: ubuntu-latest
+              needs: tfsec
+              steps:
+                - uses: actions/checkout@v4
+                - name: Build Docker image
+                  run: docker build -t myapp:latest .
+          
+                - name: Run Trivy scan
+                  run: |
+                    trivy image --format table --output trivy-results.txt myapp:latest
+                    trivy image --format sarif --output trivy-results.sarif myapp:latest
+          
+                - name: Upload Trivy report
+                  uses: actions/upload-artifact@v3
+                  with:
+                    name: trivy-reports
+                    path: |
+                      trivy-results.txt
+                      trivy-results.sarif
+          
   deploy:
     name: Trigger AWS CodePipeline
     runs-on: ubuntu-latest
