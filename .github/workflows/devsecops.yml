@@ -35,16 +35,26 @@ jobs:
     name: Trigger AWS CodePipeline
     runs-on: ubuntu-latest
     needs: trivy
+    env:
+      AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Configure AWS Credentials
+        if: ${{ env.AWS_KEY != '' && env.AWS_SECRET != '' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Trigger AWS CodePipeline
+        if: ${{ env.AWS_KEY != '' && env.AWS_SECRET != '' }}
         run: |
           aws codepipeline start-pipeline-execution \
             --name DevOps2025Pipeline \
             --region ap-south-1
+
