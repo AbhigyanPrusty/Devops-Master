@@ -14,20 +14,7 @@ variable "codedeploy_group_name" {
   type = string
 }
 
-variable "github_owner" {
+variable "artifact_bucket_name" {
   type = string
-}
-
-variable "github_repo" {
-  type = string
-}
-
-variable "github_branch" {
-  type    = string
-  default = "main"
-}
-
-variable "github_oauth_token" {
-  type      = string
-  sensitive = true
+  default = "abhigyan-2025" # or reference from your s3 module
 }
