@@ -1,11 +1,3 @@
-name: DevSecOps CI/CD
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-
 jobs:
   tfsec:
     name: Terraform Security Scan
@@ -17,14 +9,13 @@ jobs:
         with:
           format: sarif
           additional_args: "--out tfsec-results.sarif"
-
       - name: Upload tfsec report
         uses: actions/upload-artifact@v4
         with:
           name: tfsec-reports
           path: tfsec-results.sarif
 
-  trivy:
+  trivy:                         # <-- same indentation as tfsec
     name: Docker Image Scan
     runs-on: ubuntu-latest
     needs: tfsec
@@ -46,7 +37,7 @@ jobs:
             trivy-results.txt
             trivy-results.sarif
 
-  deploy:
+  deploy:                        # <-- same indentation
     name: Trigger AWS CodePipeline
     runs-on: ubuntu-latest
     needs: trivy
